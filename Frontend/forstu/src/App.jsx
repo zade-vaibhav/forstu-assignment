@@ -10,12 +10,18 @@ function App() {
   async function uploadfile(e){
   e.preventDefault()
   
+  if(file==""){
+    console.log("add excel file")
+  }else{
   const formdata=new FormData();
   formdata.append("file",file)
-  await axios.post("http://localhost:3002/api/uploadfile",formdata,
+
+  const data=await axios.post("http://localhost:3002/api/uploadfile",formdata,
   {headers:{
     "Content-Type":"multipart/form-data"
-  }})
+  }}).then((res)=>{return res}).catch((err)=>{return err})
+   console.log(data)
+}
 
   }
   return (
