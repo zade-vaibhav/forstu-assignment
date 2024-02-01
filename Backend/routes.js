@@ -54,8 +54,9 @@ router.post('/uploadfile', fileData.single("file"), async (req, res) => {
             const studentProfile = new profile(Studentdata[i]);
             await studentProfile.save();
         }
-
+        if(Studentdata.length){
         res.status(200).send("data saved")
+        }
     }
 
 })
