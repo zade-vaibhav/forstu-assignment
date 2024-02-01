@@ -3,6 +3,7 @@ const router = express.Router()
 const multer = require("multer");
 const excelToJson = require('convert-excel-to-json');
 const profile = require('./schema/studentProfile')
+const nodemailer=require("nodemailer");
 
 
 const storage = multer.diskStorage({
@@ -58,6 +59,49 @@ router.post('/uploadfile', fileData.single("file"), async (req, res) => {
         res.status(200).send("data saved")
         }
     }
+
+})
+
+
+router.get('/emailsent',async(req,res)=>{
+    const studentdata=await profile.find();
+    
+
+    //send email with node mailer
+    //1 transfer protocal
+    const transporter=nodemailer.createTransport({
+        service:'gmail',
+        auth:{
+            user:"vaibhavzade802@gmail.com",
+            pass:'lfwa nazr brgr qzyh'
+        }
+    })
+     
+    // 2 config content
+       
+   
+
+    //3 send email;
+
+    for(let i=0;i<studentdata.length;i++){
+
+        const mailOption={
+            from:'vaibhavzade802@gmail.com',
+            to:`${studentdata[i].email}`,
+            subject:"welcome",
+            text:"for adding further detail go to the link",
+            html:'<p>click here : <a href="http://localhost:3000/">link</a></p>'
+        }
+
+        try{
+            const result=await transporter.sendMail(mailOption)
+             console.log("email sent sucessfully")
+          }catch(err){
+               console.log("email send fail with error ", err)
+          }
+    }
+
+    
 
 })
 

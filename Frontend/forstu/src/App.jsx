@@ -3,6 +3,7 @@ import { useState } from 'react';
 import axios from "axios"
 import './App.css';
 
+
 function App() {
 
   const [file,setFile]=useState("")
@@ -24,12 +25,24 @@ function App() {
 }
 
   }
+
+
+  // email logic
+
+  async function sendEmail(){
+   const data=await axios.get("http://localhost:3002/api/emailsent");
+   console.log(data.data)
+  }
+
   return (
     <div className="App">
       <form onSubmit={uploadfile}>
         <input type="file" name="file" onChange={(e)=>{setFile(e.target.files[0])}}/>
         <button type='submit'>submit file</button>
       </form>
+
+      <div>notify them with email</div>
+      <button onClick={()=>{sendEmail()}}>send</button>
     </div>
   );
 }

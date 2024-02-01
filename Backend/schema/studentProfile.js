@@ -7,7 +7,8 @@ const studentProfile = new Schema({
   email:{type:String,required:true,unique:true},
   enrollment_date:{type:String,unique:false},
   state:{type:String,default:"Maharashtra"},
-
+  status:{type:String,default:"pending"},
+  acedemic_data:{type:String}
 });
 
 const profile=mongoose.model("Profile",studentProfile)
