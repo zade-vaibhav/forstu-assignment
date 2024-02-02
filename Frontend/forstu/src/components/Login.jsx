@@ -1,12 +1,14 @@
 import axios from 'axios'
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link,useNavigate } from 'react-router-dom'
+
 
 const Login = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-
   const [error_type, setError] = useState("")
+
+ const navigate=useNavigate();
 
   async function login(e) {
 
@@ -22,10 +24,13 @@ const Login = () => {
         headers: {
           "Content-Type": "application/json"
         }
+        
       })
 
+      localStorage.setItem('accessToken',data.data.token);
       setError("")
-      
+      navigate("/")
+
     } catch (err) {
       setError(err.response.data.message)
     }

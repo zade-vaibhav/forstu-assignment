@@ -1,11 +1,22 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from "axios"
+import "./adminpannel.css"
 
 
 const AdminPannel = () => {
 
     const [file, setFile] = useState("")
+    const [token, setToken] = useState("")
+
+
+    useEffect(() => {
+
+        const storedToken = localStorage.getItem('accessToken');
+
+        setToken(storedToken);
+
+    }, []);
 
     async function uploadfile(e) {
         e.preventDefault()
@@ -36,15 +47,25 @@ const AdminPannel = () => {
     }
 
     return (
-        <div>
-            <form onSubmit={uploadfile}>
-                <input type="file" name="file" onChange={(e) => { setFile(e.target.files[0]) }} />
-                <button type='submit'>submit file</button>
-            </form>
+        
+            <div className="container">
+            <nav className="navbar">
+                <div className="logo">Admin Pannel</div>
+                <div>
+                   <button>login</button>
+                </div>
+            </nav>
+            <div className='form_container'>
+                <form onSubmit={uploadfile}>
+                    <input type="file" name="file" onChange={(e) => { setFile(e.target.files[0]) }} />
+                    <button type='submit'>submit file</button>
+                </form>
 
-            <div>notify them with email</div>
-            <button onClick={() => { sendEmail() }}>send</button>
+                <div>notify them with email</div>
+                <button onClick={() => { sendEmail() }}>send</button>
+            </div>
         </div>
+
     )
 }
 
