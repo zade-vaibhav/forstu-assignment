@@ -3,7 +3,13 @@ const router = express.Router()
 const multer = require("multer");
 const excelToJson = require('convert-excel-to-json');
 const profile = require('./schema/studentProfile')
+const user = require("./schema/register")
 const nodemailer = require("nodemailer");
+const bcrypt = require("bcrypt")
+const jwt = require('jsonwebtoken');
+const dotenv = require("dotenv");
+dotenv.config()
+
 
 
 const storage = multer.diskStorage({
@@ -92,12 +98,13 @@ router.get('/emailsent', async (req, res) => {
             text: "for adding further detail go to the link",
             html: `<p>For scholership purpose please fill the given form </p><p>click here : <a href="http://localhost:3000/student-form?id=${studentdata[i].id}">link</a></p>`
         }
-
-        try {
-            const result = await transporter.sendMail(mailOption)
-            console.log("email sent sucessfully")
-        } catch (err) {
-            console.log("email send fail with error ", err)
+        if (studentdata[i].schlorship.status == "pending") {
+            try {
+                const result = await transporter.sendMail(mailOption)
+                console.log("email sent sucessfully")
+            } catch (err) {
+                console.log("email send fail with error ", err)
+            }
         }
     }
 
@@ -121,11 +128,11 @@ router.post("/update-student", async (req, res) => {
     const data = req.body;
     let scholershipPercentage = '';
     const percentage = Math.floor((Number(req.body.academic.english) + Number(req.body.academic.hindi) + Number(req.body.academic.maths) + Number(req.body.academic.science) + Number(req.body.academic.project)) / 500 * 100);
-   
+
     if (Number(data.income) < 500000 && percentage > 60) {
         scholershipPercentage = "70%";
     }
-    if (Number(data.income) < 500000 && percentage > 50 && percentage<60) {
+    if (Number(data.income) < 500000 && percentage > 50 && percentage < 60) {
         scholershipPercentage = "50%"
     }
     if (Number(data.income) < 500000 && percentage > 50) {
@@ -162,6 +169,49 @@ router.post("/update-student", async (req, res) => {
         console.log(err)
     }
 
+})
+
+
+// login
+
+router.post("/login", async (req, res) => {
+
+    const data = await user.findOne({ username: req.body.username });
+    if (data) {
+        const isvalid = await bcrypt.compare(req.body.password, data.password)
+        if (isvalid) {
+
+            const token = jwt.sign(req.body, process.env.SECRET_KEY)
+            res.json({ success: true, message: 'Login successful', token })
+        }
+        else {
+            res.status(400).json({ success: false, message: 'wrong credentials'})
+        }
+    } else {
+       
+        res.status(401).json({ success: false, message: 'admin not found' });
+    }
+})
+
+// register
+
+router.post("/register", async (req, res) => {
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+        throw new Error("fill all detail properly")
+    }
+
+    const data = await user.findOne({ email: email })
+    if (data) {
+        res.status(400).send("user already present")
+    }
+
+    const bcryptPassword = await bcrypt.hash(password, 10)
+
+    const userData = new user({ username: username, email: email, password: bcryptPassword });
+    await userData.save()
+    res.status(200).send(userData)
 })
 
 

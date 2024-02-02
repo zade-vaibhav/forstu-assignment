@@ -38,18 +38,3 @@ const profile=mongoose.model("Profile",studentProfile)
 
 module.exports=profile;
 
-
-
-// {
-//   id: '65bc700ad4ec918d16f8b92f',
-//   academic: {
-//     english: '33',
-//     hindi: '44',
-//     maths: '55',
-//     science: '66',
-//     project: '77'
-//   },
-//   income: '345678',
-//   activity: { one: 'xcndcjn', two: 'xdjcndjn', three: '' },
-//   occupation: 'farmer'
-// }
