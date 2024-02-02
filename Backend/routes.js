@@ -3,7 +3,7 @@ const router = express.Router()
 const multer = require("multer");
 const excelToJson = require('convert-excel-to-json');
 const profile = require('./schema/studentProfile')
-const nodemailer=require("nodemailer");
+const nodemailer = require("nodemailer");
 
 
 const storage = multer.diskStorage({
@@ -55,53 +55,112 @@ router.post('/uploadfile', fileData.single("file"), async (req, res) => {
             const studentProfile = new profile(Studentdata[i]);
             await studentProfile.save();
         }
-        if(Studentdata.length){
-        res.status(200).send("data saved")
+        if (Studentdata.length) {
+            res.status(200).send("data saved")
         }
     }
 
 })
 
 
-router.get('/emailsent',async(req,res)=>{
-    const studentdata=await profile.find();
-    
+router.get('/emailsent', async (req, res) => {
+    const studentdata = await profile.find();
+
 
     //send email with node mailer
     //1 transfer protocal
-    const transporter=nodemailer.createTransport({
-        service:'gmail',
-        auth:{
-            user:"vaibhavzade802@gmail.com",
-            pass:'lfwa nazr brgr qzyh'
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: "vaibhavzade802@gmail.com",
+            pass: 'lfwa nazr brgr qzyh'
         }
     })
-     
+
     // 2 config content
-       
-   
+
+
 
     //3 send email;
 
-    for(let i=0;i<studentdata.length;i++){
+    for (let i = 0; i < studentdata.length; i++) {
 
-        const mailOption={
-            from:'vaibhavzade802@gmail.com',
-            to:`${studentdata[i].email}`,
-            subject:"welcome",
-            text:"for adding further detail go to the link",
-            html:'<p>click here : <a href="http://localhost:3000/">link</a></p>'
+        const mailOption = {
+            from: 'vaibhavzade802@gmail.com',
+            to: `${studentdata[i].email}`,
+            subject: "welcome",
+            text: "for adding further detail go to the link",
+            html: `<p>For scholership purpose please fill the given form </p><p>click here : <a href="http://localhost:3000/student-form?id=${studentdata[i].id}">link</a></p>`
         }
 
-        try{
-            const result=await transporter.sendMail(mailOption)
-             console.log("email sent sucessfully")
-          }catch(err){
-               console.log("email send fail with error ", err)
-          }
+        try {
+            const result = await transporter.sendMail(mailOption)
+            console.log("email sent sucessfully")
+        } catch (err) {
+            console.log("email send fail with error ", err)
+        }
     }
 
-    
+
+})
+
+//find student
+router.post("/student", async (req, res) => {
+    const data = await profile.findById(req.body.id)
+    if (data) {
+        res.status(200).send(data)
+    } else {
+        res.status(400).send("no student found")
+    }
+
+})
+
+
+//update student
+router.post("/update-student", async (req, res) => {
+    const data = req.body;
+    let scholershipPercentage = '';
+    const percentage = Math.floor((Number(req.body.academic.english) + Number(req.body.academic.hindi) + Number(req.body.academic.maths) + Number(req.body.academic.science) + Number(req.body.academic.project)) / 500 * 100);
+   
+    if (Number(data.income) < 500000 && percentage > 60) {
+        scholershipPercentage = "70%";
+    }
+    if (Number(data.income) < 500000 && percentage > 50 && percentage<60) {
+        scholershipPercentage = "50%"
+    }
+    if (Number(data.income) < 500000 && percentage > 50) {
+        scholershipPercentage = "50%"
+    }
+    if (Number(data.income) < 500000 && percentage < 50) {
+        scholershipPercentage = "40%"
+    } else {
+        scholershipPercentage = "20%"
+    }
+
+    // update scholer ship
+
+    const schlorship = {
+        status: "sucess",
+        percentage: scholershipPercentage
+    }
+
+    console.log(scholershipPercentage)
+    try {
+        const update = await profile.updateOne(
+            { _id: req.body.id },
+            {
+                $set: {
+                    acedemic_data: req.body,
+                    schlorship: schlorship
+                }
+            },
+            { new: true })
+
+        console.log(update)
+        res.send("updated")
+    } catch (err) {
+        console.log(err)
+    }
 
 })
 
