@@ -62,7 +62,8 @@ router.post('/uploadfile', fileData.single("file"), async (req, res) => {
             await studentProfile.save();
         }
         if (Studentdata.length) {
-            res.status(200).send("data saved")
+            const allStudent=await profile.find()
+            res.status(200).send(allStudent)
         }
     }
 
@@ -175,7 +176,7 @@ router.post("/update-student", async (req, res) => {
 // login
 
 router.post("/login", async (req, res) => {
-
+    console.log("hello")
     const data = await user.findOne({ username: req.body.username });
     if (data) {
         const isvalid = await bcrypt.compare(req.body.password, data.password)

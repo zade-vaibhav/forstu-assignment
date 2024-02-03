@@ -20,7 +20,7 @@ const Login = () => {
     }
 
     try {
-      const data = await axios.post("http://localhost:3002/api/login", loginData, {
+      const data = await axios.post("https://forstobackend.onrender.com/api/login", loginData, {
         headers: {
           "Content-Type": "application/json"
         }

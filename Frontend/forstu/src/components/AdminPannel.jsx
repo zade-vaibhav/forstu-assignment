@@ -8,10 +8,11 @@ const AdminPannel = () => {
 
     const [file, setFile] = useState("")
     const [token, setToken] = useState("")
+    const [students,setStudent]=useState([])
 
 
     useEffect(() => {
-
+        
         const storedToken = localStorage.getItem('accessToken');
 
         setToken(storedToken);
@@ -25,6 +26,7 @@ const AdminPannel = () => {
             console.log("add excel file")
         } else {
             const formdata = new FormData();
+
             formdata.append("file", file)
 
             const data = await axios.post("http://localhost:3002/api/uploadfile", formdata,
@@ -33,7 +35,8 @@ const AdminPannel = () => {
                         "Content-Type": "multipart/form-data"
                     }
                 }).then((res) => { return res }).catch((err) => { return err })
-            console.log(data)
+          setStudent([...students,data.data])
+          console.log(data.data)
         }
 
     }
@@ -64,6 +67,27 @@ const AdminPannel = () => {
                 <div>notify them with email</div>
                 <button onClick={() => { sendEmail() }}>send</button>
             </div>
+           
+            {/* <div className='student'>
+            <table>
+  <tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Status</th>
+  </tr>
+  {
+    students.length!==0?students.map((ind,i)=>{
+return <tr key={i}>
+    <td>{ind.name}</td>
+    <td>{ind.email}</td>
+    <td>{ind.schlorship.status}</td>
+  </tr>
+    }):""
+  }
+  
+  
+</table>
+            </div> */}
         </div>
 
     )
