@@ -19,7 +19,7 @@ const Register = () => {
         password: password
       }
   
-      const data = await axios.post("http://localhost:3002/api/register", loginData, {
+      const data = await axios.post("https://forstobackend.onrender.com/api/register", loginData, {
         headers: {
           "Content-Type": "application/json"
         }

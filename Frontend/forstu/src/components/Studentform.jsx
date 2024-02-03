@@ -27,7 +27,7 @@ const Studentform = () => {
 
     useEffect(() => {
         async function fetchdata() {
-            const data = await axios.post("http://localhost:3002/api/student", userId, {
+            const data = await axios.post("https://forstobackend.onrender.com/api/student", userId, {
                 headers: {
                     "Content-Type": "application/json"
                 }
@@ -52,7 +52,7 @@ const Studentform = () => {
             occupation: occupation
         }
 
-        const data = await axios.post("http://localhost:3002/api/update-student", formdata, {
+        const data = await axios.post("https://forstobackend.onrender.com/api/update-student", formdata, {
             headers: {
                 "Content-Type": "application/json"
             }
