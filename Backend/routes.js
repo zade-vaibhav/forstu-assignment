@@ -97,7 +97,7 @@ router.get('/emailsent', async (req, res) => {
             to: `${studentdata[i].email}`,
             subject: "welcome",
             text: "for adding further detail go to the link",
-            html: `<p>For scholership purpose please fill the given form </p><p>click here : <a href="http://localhost:3000/student-form?id=${studentdata[i].id}">link</a></p>`
+            html: `<p>For scholership purpose please fill the given form </p><p>click here : <a href="https://main--scintillating-fudge-93a953.netlify.app/student-form?id=${studentdata[i].id}">link</a></p>`
         }
         if (studentdata[i].schlorship.status == "pending") {
             try {
